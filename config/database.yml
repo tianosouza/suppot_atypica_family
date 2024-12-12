@@ -1,0 +1,36 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV["DB_HOST"] %>
+  username: <%= ENV["POSTGRES_USER"] %>
+  password: <%= ENV["POSTGRES_PASSWORD"] %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  port: 5432
+  timeout: 5000
+
+development:
+  <<: *default
+  database: suppot_atypica_family_development
+
+test:
+  <<: *default
+  database: suppot_atypica_family_test
+
+production:
+  primary: &primary_production
+    <<: *default
+    database: suppot_atypica_family_production
+    username: suppot_atypica_family
+    password: <%= ENV["SUPPOT_ATYPICA_FAMILY_DATABASE_PASSWORD"] %>
+  cache:
+    <<: *primary_production
+    database: suppot_atypica_family_production_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: suppot_atypica_family_production_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    database: suppot_atypica_family_production_cable
+    migrations_paths: db/cable_migrate
